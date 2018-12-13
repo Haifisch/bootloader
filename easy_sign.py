@@ -1,4 +1,3 @@
-# Python program to find SHA256 hash string of a file
 import hashlib
 import argparse
 import ed25519
@@ -83,21 +82,18 @@ def main():
 	if args.generate:
 		genkey()
 		pass
-
 	if args.sign is not None:
 		filename = args.sign
 		cHash = create_hash(filename)
 		sign_hash(cHash);
 		pass
-
 	if args.stitch is not None:
 		if args.ticket is not None:
 			print 'stitching image!'
 			stitch_image(args.stitch, args.ticket)
 			pass
 		else:
-			print "--ticket must be set!"
+			print "--ticket must be set with --stitch!\n"
 			pass
 		pass
-
 main()

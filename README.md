@@ -1,3 +1,12 @@
+## Signing 
+Much TODO but...
+
+```bash
+python easy_sign.py --generate // generate signing keys
+python easy_sign.py --sign Enclave-Bootloader/STM32F1/build/enclave_stage1.bin // sign firmware image, outputs os.ticket file
+python easy_sign.py --stitch Enclave-Bootloader/STM32F1/build/enclave_stage1.bin --ticket os.ticket // stitch the ticket to the firmware
+```
+
 ## Building
 
 ### 1) Grab the sources
