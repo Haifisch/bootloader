@@ -72,12 +72,46 @@ def stitch_image(inputImage, ticketFile):
 	open('esi.bin', "wb").write(esi)
 	pass
 
+def Dump(n): 
+  s = '%x' % n
+  if len(s) & 1:
+    s = '0' + s
+  return s.decode('hex')
+  
+def combine_files(bootloaderFile, mainosFile):
+    original = open(bootloaderFile, "r")
+    stage1Buffer = original.read()
+
+    qemuFile = open("stitched_image.bin", "wb+")
+    qemuFile.write(stage1Buffer);
+
+    original.close();
+
+    currentOffset = qemuFile.tell()
+    diff = 0x8000 - currentOffset
+    if currentOffset > 0x8000:
+        print "Stage 1 image too large for our scheme!"
+        return 0
+
+    i = 0
+    while i < diff:
+        qemuFile.write(Dump(0xFF));
+        i += 1
+
+    mainOS = open(mainosFile, "r")
+    mainOSBuffer = mainOS.read()
+
+    qemuFile.write(mainOSBuffer);
+    qemuFile.close();
+    pass 
+
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--sign', type=str, nargs='?')
 	parser.add_argument('--generate', action="store_true")
 	parser.add_argument('--stitch', type=str, nargs='?')
 	parser.add_argument('--ticket', type=str, nargs='?')
+	parser.add_argument('--bootloader', type=str, nargs='?')
 	args = parser.parse_args()
 	if args.generate:
 		genkey()
@@ -91,9 +125,13 @@ def main():
 		if args.ticket is not None:
 			print 'stitching image!'
 			stitch_image(args.stitch, args.ticket)
+			combine_files(args.bootloader, "esi.bin")
 			pass
 		else:
 			print "--ticket must be set with --stitch!\n"
 			pass
 		pass
-main()
+	pass
+
+if __name__ == '__main__':
+	main()
