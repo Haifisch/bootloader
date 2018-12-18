@@ -1,9 +1,18 @@
+TARGET=imagemaker
+CFLAGS=-O2 -pipe
+CXX=gcc
+OBJDIR=build
 
-clean:
-	@echo "Cleaning"
-	@rm -rf *.o
-	@rm -rf imagemaker
+csrc = $(wildcard src/*.c) \
+       $(wildcard src/25519/*.c) 
 
-all: 
-	@echo "Building"
-	gcc main.c -o imagemaker
+obj = $(csrc:.c=.o)
+
+$(TARGET): $(obj)
+	$(CXX) -o $@ $^ $(CFLAGS) 
+
+clean: $(obj)
+	@echo "Cleaning up..."
+	@rm -f $(TARGET) $^
+
+all: $(TARGET)
